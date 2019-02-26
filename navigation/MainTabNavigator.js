@@ -5,10 +5,12 @@ import { createStackNavigator } from 'react-navigation'
 import TabBarIcon from '../components/TabBarIcon'
 import HomeScreen from '../screens/HomeScreen'
 import WalletScreen from '../screens/WalletScreen'
+import SummaryScreen from '../screens/SummaryScreen'
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
-  Wallet: WalletScreen
+  Wallet: WalletScreen,
+  Summary: SummaryScreen
 })
 
 HomeStack.navigationOptions = {

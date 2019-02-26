@@ -6,18 +6,13 @@ import {
   Text,
   View,
   FlatList,
-  TouchableHighlight
+  TouchableOpacity
 } from 'react-native'
 import { AsyncStorage } from "react-native"
 import { includes, slice } from 'lodash'
 
 import { isValidEthereum } from '../helpers/ethereum'
 import { Input } from 'react-native-elements';
-
-const WalletAddressInput = styled.TextInput`
-  width: 80%;
-  height: 40px;
-`
 
 const HomeTitle = styled.Text`
   font-size: 20px;
@@ -100,9 +95,9 @@ export default class HomeScreen extends React.Component {
             <FlatList
               data={this.state.historyList}
               renderItem={({item}) => (
-                <TouchableHighlight onPress={() => this.props.navigation.navigate('Wallet', { address: item })}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Wallet', { address: item })}>
                   <HistoryAddress>{item}</HistoryAddress>
-                </TouchableHighlight>
+                </TouchableOpacity>
               )}
               keyExtractor={item => item}
             />

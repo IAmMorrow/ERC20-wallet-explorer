@@ -4,15 +4,11 @@ import {
   View,
 } from 'react-native';
 
-import { Header } from 'react-native-elements'
-
-import OperationList from '../components/OperationList'
-import { truncate } from '../helpers/string'
-
 import { connect } from 'react-redux'
 
 import { getWalletByAddress } from '../state/wallet'
 import { getAllRates } from '../state/rates'
+import AssetSummary from '../components/WalletSummary/AssetSummary'
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -25,11 +21,7 @@ class HomeScreen extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Header
-          leftComponent={{ icon: 'chevron-left', color: '#fff', onPress: () => navigation.goBack() }}
-          centerComponent={{ text: truncate(address, 20), style: { color: '#fff' } }}
-        />
-        <OperationList refreshData={this.refreshData} address={address} counterSymbol={'BTC'} />
+        <AssetSummary address={address} counterSymbol={'USD'} />
       </View>
     )
   }
@@ -50,6 +42,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    justifyContent: 'center'
   },
   contentContainer: {
     paddingTop: 30,

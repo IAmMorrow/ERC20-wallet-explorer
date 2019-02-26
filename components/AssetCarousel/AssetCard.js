@@ -9,12 +9,10 @@ import { LinearGradient } from 'expo'
 import { map, get } from 'lodash'
 import { AreaChart } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
-import gen from 'random-seed'
-
-import gradients from './gradients'
 
 import { getCoinOHLC } from '../../state/ohlc'
 import { getRatesByCoin } from '../../state/rates'
+import { getColorFromString } from '../../helpers/color'
 
 const { width: viewportWidth } = Dimensions.get('window')
 
@@ -77,16 +75,13 @@ class AssetCard extends React.Component {
     const { symbol, balance, ohlc, rates, counterSymbol } = this.props
 
     const data = map(ohlc, ({ open }) => open)
-    const random = gen.create(symbol)
-
-    const gradientId = random(gradients.length - 1)
     const counterRate = get(rates, counterSymbol)
 
     return (
       <Slide>
         <ChartContainer>
           <LinearGradient
-            colors={gradients[gradientId].colors}
+            colors={getColorFromString(symbol)}
           >
             <AreaChart
               style={{ height: 150 }}

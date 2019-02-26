@@ -6,7 +6,7 @@ import { ListItem } from 'react-native-elements'
 import { get, filter, map } from 'lodash'
 import ta from 'time-ago'
 import AssetCarousel from '../AssetCarousel'
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 
 import {
   WaveIndicator,
@@ -96,7 +96,8 @@ class OperationList extends Component {
       rates,
       counterSymbol,
       refreshData,
-      isLoading
+      isLoading,
+      address
     } = this.props
 
     if (!wallet) {
@@ -114,8 +115,6 @@ class OperationList extends Component {
     }))
 
     const currentSymbol = summaryList[this.state.currentAssetIndex].symbol
-
-//    const filteredOperations = filter(operations, ({ symbol }) => symbol === summaryList[this.state.currentAssetIndex].symbol)
     const filteredOperations = operations[currentSymbol]
 
 

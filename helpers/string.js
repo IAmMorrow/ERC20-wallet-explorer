@@ -9,5 +9,4 @@ export const truncate = (fullStr, strLen) => {
   const backChars = Math.floor(charsToShow / 2)
 
   return `${fullStr.substr(0, frontChars)}...${fullStr.substr(fullStr.length - backChars)}`
-
 }

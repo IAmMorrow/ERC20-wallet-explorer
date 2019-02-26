@@ -48,6 +48,7 @@ class HomeScreen extends React.Component {
         <Header
           leftComponent={{ icon: 'chevron-left', color: '#fff', onPress: () => navigation.goBack() }}
           centerComponent={{ text: truncate(address, 20), style: { color: '#fff' } }}
+          rightComponent={{ icon: 'data-usage', color: '#fff', onPress: () => navigation.navigate('Summary', { address }) }}
         />
         <OperationList refreshData={this.refreshData} address={address} counterSymbol={'BTC'} />
       </View>
