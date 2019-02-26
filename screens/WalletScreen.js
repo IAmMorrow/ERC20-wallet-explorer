@@ -1,58 +1,85 @@
 import React from 'react';
-import styled from 'styled-components'
 import {
-  Image,
   Platform,
-  ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
-} from 'react-native'
+} from 'react-native';
 
-import { isValidEthereum } from '../helpers/ethereum'
+import { Header } from 'react-native-elements'
 
-const WalletAddressInput = styled.TextInput`
-  width: 80%;
-  height: 40px;
-`
+import OperationList from '../components/OperationList'
+import { truncate } from '../helpers/string'
 
-export default class HomeScreen extends React.Component {
+import { each } from 'lodash'
+import { connect } from 'react-redux'
+
+import { getWalletByAddress, fetchWallet } from '../state/wallet'
+import { getCoinsData, getAllRates } from '../state/rates'
+import { loadCoinOHLC } from '../state/ohlc'
+
+class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
-  }
+  };
 
   state = {
-    inputValue: '0xa910f92acdaf488fa6ef02174fb86208ad7722ba'
+    inputValue: ''
   }
 
-  submit = () => {
-    const address = this.state.inputValue
+  async componentDidMount () {
+    this.refreshData()
+  }
 
-    if (isValidEthereum(address)) {
-      this.props.navigation.navigate('Wallet', { address })
-    }
+  refreshData = async () => {
+    const { fetchCurrentWallet, getMarketRates, loadCoinOHLC } = this.props
+
+    const { summary } = await fetchCurrentWallet()
+
+    const assets = Object.keys(summary)
+
+    getMarketRates(assets)
+
+    each(assets, asset => {
+      loadCoinOHLC(asset, 'USD')
+    })
   }
 
   render() {
+    const { navigation, wallet, rates } = this.props
+    const address = navigation.getParam('address')
+
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Text>Open an ethereum address</Text>
-            <WalletAddressInput
-              style={{width: '80%', height: 40 }}
-              onChangeText={text => this.setState({ inputValue: text})}
-              value={this.state.inputValue}
-              placeholder={'Ethereum address'}
-              onSubmitEditing={this.submit}
-            />
-          </View>
-        </ScrollView>
+        <Header
+          leftComponent={{ icon: 'chevron-left', color: '#fff', onPress: () => navigation.goBack() }}
+          centerComponent={{ text: truncate(address, 20), style: { color: '#fff' } }}
+        />
+        <OperationList refreshData={this.refreshData} address={address} counterSymbol={'BTC'} />
       </View>
-    );
+    )
   }
 }
+
+const mapStateToProps = (state, props) => {
+  const address = props.navigation.getParam('address')
+
+  return {
+    wallet: getWalletByAddress(state, address),
+    rates: getAllRates(state)
+  }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+  const address = props.navigation.getParam('address')
+
+  return {
+    fetchCurrentWallet: () => dispatch(fetchWallet(address)),
+    getMarketRates: assets => dispatch(getCoinsData(assets)),
+    loadCoinOHLC: (asset, currency) => dispatch(loadCoinOHLC(asset, currency))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -141,4 +168,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
-})
+});

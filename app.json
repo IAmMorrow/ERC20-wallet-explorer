@@ -24,6 +24,12 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "extra": {
+      "cryptoCompare": {
+        "url": "https://min-api.cryptocompare.com",
+        "apiKey": "72ad64561c396e619aa292c0392872f5f7443541139b60d13d99d90e55cc6a0d"
+      }
     }
   }
 }
