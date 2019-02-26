@@ -1,20 +1,34 @@
-import React from 'react';
+import React from 'react'
 import styled from 'styled-components'
 import {
-  Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  FlatList,
+  TouchableHighlight
 } from 'react-native'
+import { AsyncStorage } from "react-native"
+import { includes } from 'lodash'
 
 import { isValidEthereum } from '../helpers/ethereum'
+import { Input } from 'react-native-elements';
 
 const WalletAddressInput = styled.TextInput`
   width: 80%;
   height: 40px;
+`
+
+const HomeTitle = styled.Text`
+  font-size: 20px;
+  margin-bottom: 12px;
+  margin-top: 24px;
+`
+
+const HistoryAddress = styled.Text`
+  font-size: 12px;
+  margin-bottom: 6px;
+  margin-top: 6px;
 `
 
 export default class HomeScreen extends React.Component {
@@ -23,7 +37,30 @@ export default class HomeScreen extends React.Component {
   }
 
   state = {
-    inputValue: '0xa910f92acdaf488fa6ef02174fb86208ad7722ba'
+    inputValue: '0x4e9ce36e442e55ecd9025b9a6e0d88485d628a67',
+    historyList: []
+  }
+
+  async componentDidMount () {
+    const history = await AsyncStorage.getItem('history')
+
+    const historyList = history ? JSON.parse(history) : []
+
+    this.setState({
+      historyList
+    })
+  }
+
+  updateHistory = async address => {
+    const { historyList } = this.state
+
+    if (!includes(historyList, address)) {
+      const newHistoryList = [address, ...historyList]
+      await AsyncStorage.setItem('history', JSON.stringify(newHistoryList))
+      this.setState({
+        newHistoryList
+      })
+    }
   }
 
   submit = () => {
@@ -31,6 +68,7 @@ export default class HomeScreen extends React.Component {
 
     if (isValidEthereum(address)) {
       this.props.navigation.navigate('Wallet', { address })
+      this.updateHistory(address)
     }
   }
 
@@ -39,18 +77,29 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
-            <Text>Open an ethereum address</Text>
-            <WalletAddressInput
+            <HomeTitle>Open an ethereum address</HomeTitle>
+            <Input
+              shake={true}
               style={{width: '80%', height: 40 }}
               onChangeText={text => this.setState({ inputValue: text})}
               value={this.state.inputValue}
               placeholder={'Ethereum address'}
               onSubmitEditing={this.submit}
             />
+            <HomeTitle>History</HomeTitle>
+            <FlatList
+              data={this.state.historyList}
+              renderItem={({item}) => (
+                <TouchableHighlight onPress={() => this.props.navigation.navigate('Wallet', { address: item })}>
+                  <HistoryAddress>{item}</HistoryAddress>
+                </TouchableHighlight>
+              )}
+              keyExtractor={item => item}
+            />
           </View>
         </ScrollView>
       </View>
-    );
+    )
   }
 }
 
@@ -59,13 +108,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
   contentContainer: {
     paddingTop: 30,
   },
@@ -73,72 +115,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
 })

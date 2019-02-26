@@ -9,38 +9,18 @@ import { Header } from 'react-native-elements'
 import OperationList from '../components/OperationList'
 import { truncate } from '../helpers/string'
 
-import { each } from 'lodash'
 import { connect } from 'react-redux'
 
-import { fetchWallet } from '../state/wallet'
-import { getCoinsData } from '../state/rates'
-import { loadCoinOHLC } from '../state/ohlc'
+import { getWalletByAddress } from '../state/wallet'
+import { getAllRates } from '../state/rates'
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   }
 
-  async componentDidMount () {
-    this.refreshData()
-  }
-
-  refreshData = async () => {
-    const { fetchCurrentWallet, getMarketRates, loadCoinOHLC } = this.props
-
-    const { summary } = await fetchCurrentWallet()
-
-    const assets = Object.keys(summary)
-
-    getMarketRates(assets)
-
-    each(assets, asset => {
-      loadCoinOHLC(asset, 'USD')
-    })
-  }
-
   render() {
-    const { navigation } = this.props
+    const { navigation, wallet, rates } = this.props
     const address = navigation.getParam('address')
 
     return (
@@ -55,17 +35,16 @@ class HomeScreen extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch, props) => {
+const mapStateToProps = (state, props) => {
   const address = props.navigation.getParam('address')
 
   return {
-    fetchCurrentWallet: () => dispatch(fetchWallet(address)),
-    getMarketRates: assets => dispatch(getCoinsData(assets)),
-    loadCoinOHLC: (asset, currency) => dispatch(loadCoinOHLC(asset, currency))
+    wallet: getWalletByAddress(state, address),
+    rates: getAllRates(state)
   }
 }
 
-export default connect(null, mapDispatchToProps)(HomeScreen);
+export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {

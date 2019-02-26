@@ -113,7 +113,11 @@ class OperationList extends Component {
       balance: value.balance / Math.pow(10, value.magnitude)
     }))
 
-    const filteredOperations = filter(operations, ({ symbol }) => symbol === summaryList[this.state.currentAssetIndex].symbol)
+    const currentSymbol = summaryList[this.state.currentAssetIndex].symbol
+
+//    const filteredOperations = filter(operations, ({ symbol }) => symbol === summaryList[this.state.currentAssetIndex].symbol)
+    const filteredOperations = operations[currentSymbol]
+
 
     return (
       <FlatList
@@ -137,7 +141,7 @@ class OperationList extends Component {
               onAssetSelected={this.onAssetChange}
               counterSymbol={counterSymbol}
             />
-            <SectionTitle>{'Transactions'}</SectionTitle>
+            <SectionTitle>{'Operations'}</SectionTitle>
           </View>
         }
       />

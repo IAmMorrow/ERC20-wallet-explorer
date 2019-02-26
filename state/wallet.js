@@ -1,3 +1,5 @@
+import { reduce } from 'lodash'
+
 import { fetchTxs, txsToOperations, getSummary } from '../helpers/ethereum'
 
 export const GET_WALLET = 'ERC20-wallet-explorer/repos/LOAD'
@@ -68,8 +70,16 @@ export function fetchWallet (address) {
       const operations = txsToOperations(txs, address)
       const summary = getSummary(operations)
 
+      const sortedOperations = reduce(operations, (acc, op) => {
+        if (!acc[op.symbol]) {
+          acc[op.symbol] = []
+        }
+        acc[op.symbol].push(op)
+        return acc
+      }, {})
+
       const wallet = {
-        operations,
+        operations: sortedOperations,
         summary
       }
 
