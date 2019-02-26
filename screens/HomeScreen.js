@@ -9,7 +9,7 @@ import {
   TouchableHighlight
 } from 'react-native'
 import { AsyncStorage } from "react-native"
-import { includes } from 'lodash'
+import { includes, slice } from 'lodash'
 
 import { isValidEthereum } from '../helpers/ethereum'
 import { Input } from 'react-native-elements';
@@ -38,7 +38,8 @@ export default class HomeScreen extends React.Component {
 
   state = {
     inputValue: '0x4e9ce36e442e55ecd9025b9a6e0d88485d628a67',
-    historyList: []
+    historyList: [],
+    error: null
   }
 
   async componentDidMount () {
@@ -55,7 +56,7 @@ export default class HomeScreen extends React.Component {
     const { historyList } = this.state
 
     if (!includes(historyList, address)) {
-      const newHistoryList = [address, ...historyList]
+      const newHistoryList = [address, ...slice(historyList, 0, 9),]
       await AsyncStorage.setItem('history', JSON.stringify(newHistoryList))
       this.setState({
         newHistoryList
@@ -69,6 +70,14 @@ export default class HomeScreen extends React.Component {
     if (isValidEthereum(address)) {
       this.props.navigation.navigate('Wallet', { address })
       this.updateHistory(address)
+      this.setState({
+        errorMessage: null
+      })
+
+    } else {
+      this.setState({
+        errorMessage: 'invalid ethereum address'
+      })
     }
   }
 
@@ -79,12 +88,13 @@ export default class HomeScreen extends React.Component {
           <View style={styles.welcomeContainer}>
             <HomeTitle>Open an ethereum address</HomeTitle>
             <Input
-              shake={true}
+              shake
               style={{width: '80%', height: 40 }}
               onChangeText={text => this.setState({ inputValue: text})}
               value={this.state.inputValue}
               placeholder={'Ethereum address'}
               onSubmitEditing={this.submit}
+              errorMessage={this.state.errorMessage}
             />
             <HomeTitle>History</HomeTitle>
             <FlatList
