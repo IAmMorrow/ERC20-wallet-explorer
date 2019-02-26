@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import { AsyncStorage } from "react-native"
-import { includes, slice } from 'lodash'
+import { includes, slice, toLower } from 'lodash'
 
 import { isValidEthereum } from '../helpers/ethereum'
 import { Input } from 'react-native-elements';
@@ -32,7 +32,7 @@ export default class HomeScreen extends React.Component {
   }
 
   state = {
-    inputValue: '0x4e9ce36e442e55ecd9025b9a6e0d88485d628a67',
+    inputValue: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
     historyList: [],
     error: null
   }
@@ -60,7 +60,7 @@ export default class HomeScreen extends React.Component {
   }
 
   submit = () => {
-    const address = this.state.inputValue
+    const address = toLower(this.state.inputValue)
 
     if (isValidEthereum(address)) {
       this.props.navigation.navigate('Wallet', { address })

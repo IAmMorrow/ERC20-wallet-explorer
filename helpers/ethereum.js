@@ -62,6 +62,7 @@ export const txsToOperations = (txs, address) => {
     const sending = address === tx.from
     const receiving = address === tx.to
     const value = tx.value
+
     if (sending) {
       ops.push({
         symbol: 'ETH',

@@ -114,9 +114,8 @@ class OperationList extends Component {
       balance: value.balance / Math.pow(10, value.magnitude)
     }))
 
-    const currentSymbol = summaryList[this.state.currentAssetIndex].symbol
+    const currentSymbol = get(summaryList, [this.state.currentAssetIndex, 'symbol'])
     const filteredOperations = operations[currentSymbol]
-
 
     return (
       <FlatList
