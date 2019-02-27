@@ -32,7 +32,7 @@ export default class HomeScreen extends React.Component {
   }
 
   state = {
-    inputValue: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
+    inputValue: '0xa910f92acdaf488fa6ef02174fb86208ad7722ba',
     historyList: [],
     error: null
   }

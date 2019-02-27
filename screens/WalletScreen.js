@@ -16,7 +16,7 @@ import { fetchWallet } from '../state/wallet'
 import { getCoinsData } from '../state/rates'
 import { loadCoinOHLC } from '../state/ohlc'
 
-class HomeScreen extends React.Component {
+class WalletScreen extends React.Component {
   static navigationOptions = {
     header: null,
   }
@@ -50,7 +50,7 @@ class HomeScreen extends React.Component {
           centerComponent={{ text: truncate(address, 20), style: { color: '#fff' } }}
           rightComponent={{ icon: 'data-usage', color: '#fff', onPress: () => navigation.navigate('Summary', { address }) }}
         />
-        <OperationList refreshData={this.refreshData} address={address} counterSymbol={'BTC'} />
+        <OperationList refreshData={this.refreshData} address={address} />
       </View>
     )
   }
@@ -66,7 +66,7 @@ const mapDispatchToProps = (dispatch, props) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(HomeScreen);
+export default connect(null, mapDispatchToProps)(WalletScreen)
 
 const styles = StyleSheet.create({
   container: {
